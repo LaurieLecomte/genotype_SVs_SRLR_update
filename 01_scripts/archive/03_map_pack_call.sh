@@ -8,7 +8,7 @@
 # parallel -a 02_infos/ind_ALL.txt -j 4 srun -c 10 -p medium --time=7-00:00:00 --mem=100G -J 03_map_pack_call_{} -o log/03_map_pack_call_{}_%j.log /bin/sh ./01_scripts/03_map_pack_call.sh {} &
 # parallel -a 02_infos/ind_SRLR.txt -j 4 srun -c 10 -p medium --time=7-00:00:00 --mem=100G -J 03_map_pack_call_{} -o log/03_map_pack_call_{}_%j.log /bin/sh ./01_scripts/03_map_pack_call.sh {} &
 
-# srun -c 10 -p medium --time=7-00:00:00 --mem=100G -J 03_map_pack_call_safoBEAs_021-21 -o log/03_map_pack_call_safoBEAs_021-21_%j.log /bin/sh ./01_scripts/03_map_pack_call.sh safoBEAs_021-21 &
+# srun -c 20 -p medium --time=7-00:00:00 --mem=100G -J 03_map_pack_call_safoBEAs_021-21 -o log/03_map_pack_call_safoBEAs_021-21_%j.log /bin/sh ./01_scripts/03_map_pack_call.sh safoBEAs_021-21 &
 
 # VARIABLES 
 GENOME="03_genome/genome.fasta"
@@ -27,7 +27,7 @@ CALLS_DIR="07_calls"
 MERGED_DIR="08_MERGED"
 FILT_DIR="09_filtered"
 
-CPU=10
+CPU=20
 MEM="100G"
 
 #CANDIDATES_VCF="$VCF_DIR/candidates/"$(basename -s .ready.vcf $INPUT_VCF)".candidates.vcf.gz"
@@ -39,7 +39,7 @@ INS_FA="$VCF_DIR/candidates/"$(basename -s .ready.vcf $INPUT_VCF)"_INS.fa"
 
 CHRS="02_infos/chr_list.txt"
 
-CPU=10
+CPU=20
 
 SAMPLE=$1
 FASTQ1="$FASTQ_DIR/"$SAMPLE"_1.trimmed.fastq.gz"
@@ -48,8 +48,18 @@ FASTQ2="$FASTQ_DIR/"$SAMPLE"_2.trimmed.fastq.gz"
 
 
 # vg map
-vg map $GRAPH_DIR/graph.vg --xg-name $GRAPH_DIR/graph.xg -f $FASQ1 -f $FASTQ2 --sample $SAMPLE --threads $CPU --debug > $ALIGNED_DIR/"$SAMPLE".gam #-x -N (--sample) -t
-#vg map --xg-name $GRAPH_DIR/graph_regions.xg -f $FASQ1 -f $FASTQ2 --sample $SAMPLE --threads $CPU > $ALIGNED_DIR/"$SAMPLE"_regions.gam
+#-d, --base-name BASE          use BASE.xg and BASE.gcsa as the input index pair
+#-x, --xg-name FILE            use this xg index or graph (defaults to <graph>.vg.xg)
+#-g, --gcsa-name FILE          use this GCSA2 index (defaults to <graph>.gcsa)
+
+
+#vg map $GRAPH_DIR/graph.vg --xg-name $GRAPH_DIR/graph.xg -f $FASTQ1 -f $FASTQ2 --sample $SAMPLE --threads $CPU --debug > $ALIGNED_DIR/"$SAMPLE".gam # does not work #-x -N (--sample) -t
+# I am running this one on aug 19: vg map --xg-name $GRAPH_DIR/graph.xg --gcsa-name $GRAPH_DIR/graph.gcsa -f $FASTQ1 -f $FASTQ2 --sample $SAMPLE --threads $CPU --log-time > $ALIGNED_DIR/"$SAMPLE".gam #-x -N (--sample) -t
+#vg map --base-name $GRAPH_DIR/graph -f $FASQ1 -f $FASTQ2 --sample $SAMPLE --threads $CPU  > $ALIGNED_DIR/"$SAMPLE".gam # -d -f -f -N -t -D
+
+# vg map --xg-name $GRAPH_DIR/graph_regions.xg --gcsa-name $GRAPH_DIR/graph_regions.gcsa -f $FASTQ1 -f $FASTQ2 --sample $SAMPLE --threads $CPU --log-time > $ALIGNED_DIR/"$SAMPLE"_regions_map.gam #trying this 2024/10/09. cancelled, too long
+vg map --xg-name $GRAPH_DIR/graph_regions.xg --gcsa-name $GRAPH_DIR/graph_regions.pruned.gcsa -f $FASTQ1 -f $FASTQ2 --sample $SAMPLE --threads $CPU --log-time > $ALIGNED_DIR/"$SAMPLE"_regions_map_pruned.gam
+vg map --xg-name $GRAPH_DIR/graph_regions.xg --gcsa-name $GRAPH_DIR/graph_regions.prunedP.gcsa -f $FASTQ1 -f $FASTQ2 --sample $SAMPLE --threads $CPU --log-time > $ALIGNED_DIR/"$SAMPLE"_regions_map_prunedP.gam
 
 # vg pack
 #vg pack --xg $GRAPH_DIR/graph.xg --gam $ALIGNED_DIR/"$SAMPLE".gam --min-mapq 5 --threads $CPU --packs-out $PACKS_DIR/"$SAMPLE".pack # -x -g -Q -t -o 

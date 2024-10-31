@@ -11,7 +11,7 @@ GENOME="03_genome/genome.fasta"
 FASTQ_DIR="04_reads"
 
 VCF_DIR="05_candidates"
-INPUT_VCF="$VCF_DIR/raw/merged_SUPP2.ready.vcf"
+INPUT_VCF="$VCF_DIR/raw/merged_all_callers.ready.vcf"
 
 GRAPH_DIR="06_graph"
 INDEX_DIR="$GRAPH_DIR/index"
@@ -21,7 +21,7 @@ PACKS_DIR="$GRAPH_DIR/packs"
 GIRAFFE_DIR="$GRAPH_DIR/giraffe_workflow"
 
 CALLS_DIR="07_calls"
-MERGED_DIR="08_MERGED"
+MERGED_DIR="08_merged"
 FILT_DIR="09_filtered"
 
 
@@ -42,11 +42,11 @@ FASTQ2="$FASTQ_DIR/"$SAMPLE"_2.trimmed.fastq.gz"
 
 
 # 1. Map trimmed reads to graph
-#vg giraffe --xg-name $GRAPH_DIR/graph_regions_giraffe.xg --gbz-name $INDEX_DIR/graph_regions_giraffe.gbz --dist-name $INDEX_DIR/graph_regions_giraffe.dist --minimizer-name $INDEX_DIR/graph_regions_giraffe.min -f $FASTQ1 -f $FASTQ2 -N $SAMPLE --threads $CPU > $ALIGNED_DIR/"$SAMPLE"_regions_giraffe.gam
+vg giraffe --xg-name $GRAPH_DIR/graph_regions_giraffe_all_callers.xg --gbz-name $INDEX_DIR/graph_regions_giraffe_all_callers.gbz --dist-name $INDEX_DIR/graph_regions_giraffe_all_callers.dist --minimizer-name $INDEX_DIR/graph_regions_giraffe_all_callers.min -f $FASTQ1 -f $FASTQ2 -N $SAMPLE --threads $CPU > $ALIGNED_DIR/"$SAMPLE"_regions_giraffe_all_callers.gam
 
 # 2. Compute read support
-vg pack --xg $GRAPH_DIR/graph_regions_giraffe.xg --gam $ALIGNED_DIR/"$SAMPLE"_regions_giraffe.gam --packs-out $PACKS_DIR/"$SAMPLE"_regions_giraffe.pack --min-mapq 5 --threads $CPU
+vg pack --xg $GRAPH_DIR/graph_regions_giraffe_all_callers.xg --gam $ALIGNED_DIR/"$SAMPLE"_regions_giraffe_all_callers.gam --packs-out $APACKS_DIR/"$SAMPLE"_regions_giraffe_all_callers.pack --min-mapq 5 --threads $CPU
 
 # 3. Call SV genotypes
-vg call  $GRAPH_DIR/graph_regions_giraffe.xg --pack $PACKS_DIR/"$SAMPLE"_regions_giraffe.pack --snarls $SNARLS_DIR/graph_regions_giraffe.pb --ref-fasta $GENOME --ins-fasta $INS_FA --sample "$SAMPLE" --threads $CPU --vcf $CANDS > $CALLS_DIR/raw/"$SAMPLE".vcf
+vg call  $GRAPH_DIR/graph_regions_giraffe_all_callers.xg --pack $PACKS_DIR/"$SAMPLE"_regions_giraffe_all_callers.pack --snarls $SNARLS_DIR/graph_regions_giraffe_all_callers.pb --ref-fasta $GENOME --ins-fasta $INS_FA --sample "$SAMPLE" --threads $CPU --vcf $CANDS > $CALLS_DIR/raw/"$SAMPLE"_all_callers.vcf
 
