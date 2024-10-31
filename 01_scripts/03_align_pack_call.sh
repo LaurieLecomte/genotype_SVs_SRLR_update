@@ -45,8 +45,8 @@ FASTQ2="$FASTQ_DIR/"$SAMPLE"_2.trimmed.fastq.gz"
 #vg giraffe --xg-name $GRAPH_DIR/graph_regions_giraffe.xg --gbz-name $INDEX_DIR/graph_regions_giraffe.gbz --dist-name $INDEX_DIR/graph_regions_giraffe.dist --minimizer-name $INDEX_DIR/graph_regions_giraffe.min -f $FASTQ1 -f $FASTQ2 -N $SAMPLE --threads $CPU > $ALIGNED_DIR/"$SAMPLE"_regions_giraffe.gam
 
 # 2. Compute read support
-vg pack --xg $GRAPH_DIR/graph_regions_giraffe.xg --gam $ALIGNED_DIR/"$SAMPLE"_regions_giraffe.gam --packs-out $PACKS_DIR/"$SAMPLE"_regions_giraffe.pack --min-mapq 5 --threads $CPU
+#vg pack --xg $GRAPH_DIR/graph_regions_giraffe.xg --gam $ALIGNED_DIR/"$SAMPLE"_regions_giraffe.gam --packs-out $PACKS_DIR/"$SAMPLE"_regions_giraffe.pack --min-mapq 5 --threads $CPU
 
 # 3. Call SV genotypes
-vg call  $GRAPH_DIR/graph_regions_giraffe.xg --pack $PACKS_DIR/"$SAMPLE"_regions_giraffe.pack --snarls $SNARLS_DIR/graph_regions_giraffe.pb --ref-fasta $GENOME --ins-fasta $INS_FA --sample "$SAMPLE" --threads $CPU --vcf $CANDS > $CALLS_DIR/raw/"$SAMPLE".vcf
+vg call  $GRAPH_DIR/graph_regions_giraffe.xg --pack $PACKS_DIR/"$SAMPLE"_regions_giraffe.pack --snarls $SNARLS_DIR/graph_regions_giraffe.pb --ref-fasta $GENOME --ins-fasta $INS_FA --sample "$SAMPLE" --threads $CPU --vcf $CANDS > $CALLS_DIR/raw/"$SAMPLE".vcf # --genotype-snarls does not keep SV info and genotypes less SVs
 
